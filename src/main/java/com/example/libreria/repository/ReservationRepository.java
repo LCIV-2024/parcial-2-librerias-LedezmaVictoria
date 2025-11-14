@@ -7,11 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    
-    // TODO: Implementar los métodos de la reserva
-}
 
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId")
+    List<Reservation> findByUserId(@Param("userId") Long userId);
+
+    List<Reservation> findByStatus(Reservation.ReservationStatus status);
+
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.status = 'ACTIVE' " +
+            "AND r.expectedReturnDate < CURRENT_DATE")
+    List<Reservation> findOverdueReservations();
+}
